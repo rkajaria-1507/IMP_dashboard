@@ -36,8 +36,8 @@ def plot_interaction(data: pd.DataFrame, moderator: str) -> plt.Figure | None:
 
     fig, ax = plt.subplots(figsize=(8, 5))
     sns.lineplot(data=plot_df, x="ADT_c", y="EE", hue="ModLevel", palette="Set2", ax=ax)
-    ax.set_title(f"Adaptability × {moderator} → EE")
-    ax.set_xlabel("Adaptability (centered)")
+    ax.set_title(f"Adaptability × {moderator} → Emotional Exhaustion")
+    ax.set_xlabel("Adaptability (Centered)")
     ax.set_ylabel("Emotional Exhaustion")
     ax.grid(axis="both", linestyle="--", alpha=0.3)
     return fig

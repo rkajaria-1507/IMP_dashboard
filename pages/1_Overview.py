@@ -4,6 +4,7 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import numpy as np
 
 from data_loader import get_dataset
 
@@ -39,6 +40,56 @@ st.subheader("Summary Statistics")
 summary = df.describe().T
 st.dataframe(summary)
 
+# --- Scale Reliability (Cronbach's Alpha) ---
+st.subheader("Scale Reliability (Cronbach's α)")
+
+scale_definitions = {
+    "Adaptability": "ADT",
+    "Extraversion": "EXT",
+    "Agreeableness": "AGR",
+    "Conscientiousness": "CST",
+    "Neuroticism": "NEU",
+    "Openness": "OPE",
+    "Emotional Exhaustion": "EE",
+    "Depersonalisation": "DP",
+    "Personal Accomplishment": "PA",
+    "Autonomy": "AUT",
+    "Workload": "WKL",
+    "Perceived Organizational Support": "POS",
+}
+
+def cronbach_alpha(item_data: pd.DataFrame) -> float:
+    """Compute Cronbach's alpha for a set of items."""
+    item_data = item_data.dropna()
+    if item_data.empty or item_data.shape[1] < 2:
+        return np.nan
+    
+    item_vars = item_data.var(axis=0, ddof=1)
+    total_var = item_data.sum(axis=1).var(ddof=1)
+    n_items = item_data.shape[1]
+    
+    if total_var == 0:
+        return np.nan
+    
+    alpha = (n_items / (n_items - 1)) * (1 - item_vars.sum() / total_var)
+    return alpha
+
+reliability_results = []
+for scale_name, prefix in scale_definitions.items():
+    item_cols = [c for c in df.columns if c.upper().startswith(prefix.upper()) and c != prefix and not c.endswith("_c")]
+    if len(item_cols) >= 2:
+        item_data = df[item_cols].apply(pd.to_numeric, errors="coerce")
+        alpha = cronbach_alpha(item_data)
+        reliability_results.append({
+            "Scale": scale_name,
+            "Items": len(item_cols),
+            "Cronbach's α": f"{alpha:.3f}" if not np.isnan(alpha) else "N/A"
+        })
+
+if reliability_results:
+    reliability_df = pd.DataFrame(reliability_results)
+    st.dataframe(reliability_df, use_container_width=True, hide_index=True)
+
 # --- Histograms ---
 st.subheader("Distribution Snapshots")
 
@@ -48,13 +99,13 @@ hist_targets = [
     ("Work Hours / Week", "HoursPerWeek"),
     ("Emotional Exhaustion", "EE"),
     ("Depersonalisation", "DP"),
-    ("Personal Accomplishment", "PA"),
-    ("Adaptability", "ADT"),
-    ("Conscientiousness", "CST"),
-    ("Positive Climate", "POS"),
-    ("Autonomy", "AUT"),
-    ("Workload", "WKL"),
-    ("Neuroticism", "NEU"),
+    ("Personal Accomplishment (PA)", "PA"),
+    ("Adaptability (ADT)", "ADT"),
+    ("Conscientiousness (CST)", "CST"),
+    ("Perceived Organizational Support (POS)", "POS"),
+    ("Autonomy (AUT)", "AUT"),
+    ("Workload (WKL)", "WKL"),
+    ("Neuroticism (NEU)", "NEU"),
 ]
 
 numeric_targets = [
