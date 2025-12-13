@@ -73,24 +73,6 @@ if available_dist_cols:
     fig.tight_layout()
     st.pyplot(fig, width='stretch')
 
-# Simple burnout risk (can be replaced with Maslach cutoffs)
-st.divider()
-st.subheader("Burnout Risk Indicators")
-
-risk_cols = st.columns(3)
-
-if "EE" in df.columns:
-    high_ee = (df["EE"] > df["EE"].mean() + df["EE"].std()).mean() * 100
-    risk_cols[0].metric("High Emotional Exhaustion (%)", f"{high_ee:.1f}%")
-
-if "DP" in df.columns:
-    high_dp = (df["DP"] > df["DP"].mean() + df["DP"].std()).mean() * 100
-    risk_cols[1].metric("High Depersonalisation (%)", f"{high_dp:.1f}%")
-
-if "PA" in df.columns:
-    low_pa = (df["PA"] < df["PA"].mean() - df["PA"].std()).mean() * 100
-    risk_cols[2].metric("Low Personal Accomplishment (%)", f"{low_pa:.1f}%")
-
 # --- Burnout by Organisational Context ---
 st.divider()
 st.subheader("Burnout by Organisational Context (Key Moderators)")
@@ -111,8 +93,13 @@ available_moderators = [(col, label) for col, label in moderators if col in df.c
 available_burnout = [(col, label, color) for col, label, color in burnout_dimensions if col in df.columns]
 
 if available_moderators and available_burnout:
-    for burnout_col, burnout_label, burnout_color in available_burnout:
-        st.markdown(f"**{burnout_label}**")
+    # Create single figure with all three charts
+    fig, axes = plt.subplots(1, len(available_burnout), figsize=(len(available_burnout) * 6, 5))
+    if len(available_burnout) == 1:
+        axes = [axes]
+    
+    for idx, (burnout_col, burnout_label, burnout_color) in enumerate(available_burnout):
+        ax = axes[idx]
         
         context_data = []
         mod_categories = []
@@ -143,23 +130,22 @@ if available_moderators and available_burnout:
             low_values = [context_data[i*2] for i in range(n_mods)]
             high_values = [context_data[i*2 + 1] for i in range(n_mods)]
             
-            fig, ax = plt.subplots(figsize=(10, 6))
-            
             ax.bar(x_positions - width/2, low_values, width, label="Low", 
                    color="#3498db", alpha=0.8, edgecolor="black", linewidth=0.8)
             ax.bar(x_positions + width/2, high_values, width, label="High", 
                    color="#e74c3c", alpha=0.8, edgecolor="black", linewidth=0.8)
             
-            ax.set_xlabel("Organisational Factor", fontsize=12)
-            ax.set_ylabel(f"Mean {burnout_label}", fontsize=12)
-            ax.set_title(f"{burnout_label} Across Organisational Contexts", fontsize=14)
+            ax.set_xlabel("Organisational Factor", fontsize=11)
+            ax.set_ylabel(f"Mean {burnout_label}", fontsize=11)
+            ax.set_title(f"{burnout_label}", fontsize=12, fontweight='bold')
             ax.set_xticks(x_positions)
-            ax.set_xticklabels([label for _, label in available_moderators])
-            ax.legend()
+            ax.set_xticklabels([label for _, label in available_moderators], fontsize=9)
+            ax.legend(fontsize=9)
             ax.grid(axis="y", linestyle="--", alpha=0.3)
-            
-            fig.tight_layout()
-            st.pyplot(fig, width='stretch')
+    
+    fig.suptitle("Burnout Across Organisational Contexts", fontsize=14, fontweight='bold', y=1.02)
+    fig.tight_layout()
+    st.pyplot(fig, width='stretch')
     
     st.info("Burnout prevalence is markedly higher under conditions of high workload and low organisational support, highlighting the role of contextual stressors.")
 else:
