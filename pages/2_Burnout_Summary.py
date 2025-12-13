@@ -46,7 +46,7 @@ if len(available_cols) >= 2:
     ax.grid(axis="y", linestyle="--", alpha=0.3)
     
     fig.tight_layout()
-    st.pyplot(fig, use_container_width=True)
+    st.pyplot(fig, width='stretch')
 
 st.divider()
 
@@ -71,7 +71,7 @@ if available_dist_cols:
         ax.grid(axis="y", linestyle="--", alpha=0.3)
     
     fig.tight_layout()
-    st.pyplot(fig, use_container_width=True)
+    st.pyplot(fig, width='stretch')
 
 # Simple burnout risk (can be replaced with Maslach cutoffs)
 st.divider()
@@ -159,9 +159,9 @@ if available_moderators and available_burnout:
             ax.grid(axis="y", linestyle="--", alpha=0.3)
             
             fig.tight_layout()
-            st.pyplot(fig, use_container_width=True)
+            st.pyplot(fig, width='stretch')
     
-    # st.info("Burnout prevalence is markedly higher under conditions of high workload and low organisational support, highlighting the role of contextual stressors.")
+    st.info("Burnout prevalence is markedly higher under conditions of high workload and low organisational support, highlighting the role of contextual stressors.")
 else:
     pass
     # st.warning("Required variables not available for organisational context analysis.")

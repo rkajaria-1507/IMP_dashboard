@@ -88,7 +88,7 @@ for scale_name, prefix in scale_definitions.items():
 
 if reliability_results:
     reliability_df = pd.DataFrame(reliability_results)
-    st.dataframe(reliability_df, use_container_width=True, hide_index=True)
+    st.dataframe(reliability_df, hide_index=True)
 
 # --- Histograms ---
 st.subheader("Distribution Snapshots")
@@ -132,6 +132,6 @@ if numeric_targets:
         ax.remove()
 
     fig.tight_layout()
-    st.pyplot(fig, use_container_width=True)
+    st.pyplot(fig, width='stretch')
 else:
     st.info("No numeric columns available for histogram view.")

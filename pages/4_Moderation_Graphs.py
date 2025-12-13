@@ -50,6 +50,6 @@ for mod in mods:
         st.subheader(f"Moderation: {mod}")
         interaction_fig = plot_interaction(df, mod)
         if interaction_fig is not None:
-            st.pyplot(interaction_fig, use_container_width=True)
+            st.pyplot(interaction_fig, width='stretch')
 
 

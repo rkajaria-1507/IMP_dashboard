@@ -63,8 +63,7 @@ if predictor_code == "personality":
             sns.regplot(
                 x=df[pred], y=df[outcome], ax=ax,
                 scatter_kws={"alpha": 0.5, "color": "#9b59b6"},
-                line_kws={"color": "#e74c3c", "linewidth": 2},
-                lowess=True
+                line_kws={"color": "#e74c3c", "linewidth": 2}
             )
             ax.set_title(title, fontsize=11)
             ax.set_xlabel(pred)
@@ -72,7 +71,7 @@ if predictor_code == "personality":
             ax.grid(axis="both", linestyle="--", alpha=0.3)
         
         fig.tight_layout()
-        st.pyplot(fig, use_container_width=True)
+        st.pyplot(fig, width='stretch')
         st.info(interpretation)
     else:
         st.warning("Required personality trait data not available.")
@@ -93,8 +92,7 @@ else:
                 sns.regplot(
                     x=df[predictor_code], y=df[outcome], ax=ax,
                     scatter_kws={"alpha": 0.5, "color": colors_map[outcome]},
-                    line_kws={"color": "#2c3e50", "linewidth": 2},
-                    lowess=True
+                    line_kws={"color": "#2c3e50", "linewidth": 2}
                 )
                 ax.set_title(f"{burnout_labels[outcome]} vs {selected_predictor}", fontsize=11)
                 ax.set_xlabel(selected_predictor)
@@ -102,7 +100,7 @@ else:
                 ax.grid(axis="both", linestyle="--", alpha=0.3)
             
             fig.tight_layout()
-            st.pyplot(fig, use_container_width=True)
+            st.pyplot(fig, width='stretch')
             st.info(interpretation)
         else:
             st.warning("Burnout dimension data not available.")
@@ -146,7 +144,7 @@ if numeric_df.shape[1] >= 2:
     )
     ax.tick_params(labelsize=8)
     fig.tight_layout()
-    st.pyplot(fig, use_container_width=True)
+    st.pyplot(fig, width='stretch')
 else:
     st.info("Not enough numeric columns to compute correlations.")
 
@@ -206,6 +204,6 @@ if valid_relationships:
 
     fig.suptitle("Comprehensive Bivariate Relationships", fontsize=16, y=0.99)
     fig.tight_layout(rect=[0, 0, 1, 0.97])
-    st.pyplot(fig, use_container_width=True)
+    st.pyplot(fig, width='stretch')
 else:
     st.info("No numeric variable pairs available for regression plots.")
